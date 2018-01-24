@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Linear_Congruential_Generator
 {
@@ -17,6 +18,7 @@ namespace Linear_Congruential_Generator
         string [] testCases;
         private int countOfTests;
         private int Result;
+        private List<int> binaryCode;
 
         public void StartProgram()
         {
@@ -26,37 +28,64 @@ namespace Linear_Congruential_Generator
             {
                 int testi = 0;
                 int.TryParse(testCases[i], out testi);
-                searchResult(testi);
+                binaryCode = new List<int>();
+                if (testi < 0)
+                {
+                    testi = Math.Abs(testi);
+                    formBinary(testi);
+                    binaryCode.Insert(0, 1);
+                    doFinalConvert();
+                }
+                else
+                {
+                    formBinary(testi);
+                    binaryCode.Insert(0, 0);
+                }
+
+                Result = 0;
+                foreach (var B in binaryCode)
+                {
+                    if (B == 1)
+                        Result++;
+                }
                 Console.Write("{0} ", Result);
             }
         }
 
-        void searchResult(int testCase)
+        void formBinary(int testCase)
         {
-            if (testCase < 0)
-            {
-                Result = 0;
-                testCase = Math.Abs(testCase);
-                for(int i = 0; i< 32; i++ )
+            for (int i = 0; i < 31; i++)
                 {
-                    if (testCase % 2 == 1)
-                    {
-                        Result++;
-                    }
+                    binaryCode.Add(testCase % 2);
                     testCase /= 2;
-                }
-            }
-            else
+                }  
+            binaryCode.Reverse();
+        }
+
+        void doFinalConvert()
+        {
+            for (int i = 1; i < 32; i++)
             {
-                Result = 0;
-                while (testCase != 0)
-                {
-                    Result += testCase % 2;
-                    testCase /= 2;
-                }
+                if (binaryCode[i] == 0)
+                    binaryCode[i] = 1;
+                else
+                    binaryCode[i] = 0;
             }
 
-            
+            int temp = 31;
+            while (true)
+            {
+                if (binaryCode[temp] == 0)
+                {
+                    binaryCode[temp] = 1;
+                    break;
+                }
+                else
+                {
+                    binaryCode[temp] = 0;
+                    temp--;
+                }
+            }
         }
     }
 }
